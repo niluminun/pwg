@@ -1,0 +1,159 @@
+{
+  "key": "pwg golden test key",
+  "cases": [
+    {
+      "name": "default rules",
+      "args": [
+        "gen",
+        "github.com",
+        "--account",
+        "budi@gmail.com"
+      ],
+      "password": "5b#1kPU@U9e50!o7#uE$"
+    },
+    {
+      "name": "counter 2",
+      "args": [
+        "gen",
+        "github.com",
+        "--account",
+        "budi@gmail.com",
+        "--counter",
+        "2"
+      ],
+      "password": "-F*A3&fLb5#^m1s7Jbrw"
+    },
+    {
+      "name": "min length",
+      "args": [
+        "gen",
+        "github.com",
+        "--account",
+        "budi@gmail.com",
+        "--length",
+        "1",
+        "--require",
+        "l1"
+      ],
+      "password": "e"
+    },
+    {
+      "name": "max length",
+      "args": [
+        "gen",
+        "github.com",
+        "--account",
+        "budi@gmail.com",
+        "--length",
+        "128"
+      ],
+      "password": "8j99Gwy!2KWL%Tb#P9#CZCPUP5C1pfZs&zUkjUSuLP$#1nkXR1h0r&lg@tPtFK$d#1apXzmkU6Tyn0zEhJoME9&m5rbeX0fLolFXk05jc4pm0CA!3VG4zub@7MdREs7!"
+    },
+    {
+      "name": "custom symbols",
+      "args": [
+        "gen",
+        "example.org",
+        "--account",
+        "Ani",
+        "--length",
+        "24",
+        "--require",
+        "l1,u1,d1,s3",
+        "--symbols",
+        "-_"
+      ],
+      "password": "svuiiHBjUpZ__m_K9b0vq_Qo"
+    },
+    {
+      "name": "digits only",
+      "args": [
+        "gen",
+        "bank.example",
+        "--account",
+        "ani",
+        "--length",
+        "8",
+        "--require",
+        "d1"
+      ],
+      "password": "53786651"
+    },
+    {
+      "name": "upper only",
+      "args": [
+        "gen",
+        "bank.example",
+        "--account",
+        "ani",
+        "--length",
+        "12",
+        "--require",
+        "u1"
+      ],
+      "password": "ZBEOBFWYFCNQ"
+    },
+    {
+      "name": "lower and digit",
+      "args": [
+        "gen",
+        "localhost:8080",
+        "--account",
+        "root",
+        "--length",
+        "16",
+        "--require",
+        "l2,d2",
+        "--counter",
+        "7"
+      ],
+      "password": "7ww3tkfcxer1vmap"
+    },
+    {
+      "name": "symbols only",
+      "args": [
+        "gen",
+        "x.io",
+        "--account",
+        "a",
+        "--length",
+        "10",
+        "--require",
+        "s10",
+        "--symbols",
+        "!?"
+      ],
+      "password": "!????!????"
+    },
+    {
+      "name": "spelling 1",
+      "args": [
+        "gen",
+        "HTTPS://GitHub.com/x?y",
+        "--account",
+        "  Budi@Gmail.com "
+      ],
+      "password": "5b#1kPU@U9e50!o7#uE$"
+    },
+    {
+      "name": "spelling 2",
+      "args": [
+        "gen",
+        "  github.com ",
+        "--account",
+        "budi@gmail.com"
+      ],
+      "password": "5b#1kPU@U9e50!o7#uE$"
+    },
+    {
+      "name": "spelling 3",
+      "args": [
+        "gen",
+        "github.com/login#top",
+        "--account",
+        "BUDI@GMAIL.COM"
+      ],
+      "password": "5b#1kPU@U9e50!o7#uE$"
+    }
+  ]
+}

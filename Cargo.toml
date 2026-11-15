@@ -1,0 +1,17 @@
+[package]
+name = "pwg"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["niluminun"]
+
+[dependencies]
+argon2 = "0.5.3"
+sha3 = "0.11.0"
+rpassword = "7.5"
+zeroize = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+strip = true
