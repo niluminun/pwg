@@ -1,0 +1,88 @@
+name: release
+
+# Runs when a tag like v0.1.0 is pushed. The tag must match the version in Cargo.toml.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04, ext: "" }
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm, ext: "" }
+          - { target: x86_64-pc-windows-msvc, os: windows-latest, ext: ".exe" }
+          - { target: aarch64-apple-darwin, os: macos-latest, ext: "" }
+          - { target: x86_64-apple-darwin, os: macos-15-intel, ext: "" }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      # Golden vectors must pass on every target before anything is published.
+      - name: Test
+        run: cargo test --locked --release
+      - name: Build
+        run: cargo build --release --locked
+      - name: Stage binary
+        shell: bash
+        run: |
+          mkdir dist
+          cp "target/release/pwg${{ matrix.ext }}" "dist/pwg-${{ matrix.target }}${{ matrix.ext }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bin-*
+          merge-multiple: true
+          path: dist
+      - name: Check tag against Cargo.toml
+        run: |
+          crate_version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)
+          if [ "${GITHUB_REF_NAME}" != "v${crate_version}" ]; then
+            echo "tag ${GITHUB_REF_NAME} does not match Cargo.toml version ${crate_version}"
+            exit 1
+          fi
+      - name: Extract release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '/^## \[/ { p = (index($0, "## [" v "]") == 1); next } p' CHANGELOG.md > notes.md
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "CHANGELOG.md has no entry for ${version}"
+            exit 1
+          fi
+          cat >> notes.md <<VERIFY
+
+          ## Verify
+          Download one binary and SHA256SUMS, then:
+
+          sha256sum -c SHA256SUMS --ignore-missing
+          gh attestation verify <binary> -R ${GITHUB_REPOSITORY}
+          VERIFY
+      - name: Write SHA256SUMS
+        working-directory: dist
+        run: sha256sum pwg-* > SHA256SUMS
+      - name: Attest build provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/pwg-*
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/* --title "${GITHUB_REF_NAME}" --notes-file notes.md --verify-tag
