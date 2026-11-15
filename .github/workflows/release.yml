@@ -14,24 +14,33 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04, ext: "" }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm, ext: "" }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-24.04, ext: "" }
+          - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm, ext: "" }
           - { target: x86_64-pc-windows-msvc, os: windows-latest, ext: ".exe" }
           - { target: aarch64-apple-darwin, os: macos-latest, ext: "" }
           - { target: x86_64-apple-darwin, os: macos-15-intel, ext: "" }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install musl tools
+        if: endsWith(matrix.target, '-musl')
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
       # Golden vectors must pass on every target before anything is published.
       - name: Test
-        run: cargo test --locked --release
+        run: cargo test --locked --release --target ${{ matrix.target }}
       - name: Build
-        run: cargo build --release --locked
+        run: cargo build --release --locked --target ${{ matrix.target }}
+      # Linux release binaries must be static; stop the release if they are not.
+      - name: Check static linking
+        if: endsWith(matrix.target, '-musl')
+        run: file target/${{ matrix.target }}/release/pwg | grep -Eq 'statically linked|static-pie linked'
       - name: Stage binary
         shell: bash
         run: |
           mkdir dist
-          cp "target/release/pwg${{ matrix.ext }}" "dist/pwg-${{ matrix.target }}${{ matrix.ext }}"
+          cp "target/${{ matrix.target }}/release/pwg${{ matrix.ext }}" "dist/pwg-${{ matrix.target }}${{ matrix.ext }}"
       - uses: actions/upload-artifact@v4
         with:
           name: bin-${{ matrix.target }}

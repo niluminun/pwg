@@ -23,6 +23,8 @@ cargo build --release
 
 The binary is `target/release/pwg`.
 
+The prebuilt Linux binaries on the releases page are statically linked (musl), so they do not depend on the system glibc. Windows and macOS binaries use the system libraries of those platforms.
+
 `pwg --version` prints `pwg 0.1-<hash>`, where `<hash>` is the first 8 characters of the git commit the binary was built from. A build with uncommitted changes to tracked files gets a `-dirty` suffix. A build without git (for example from a zip) prints `0.1-unknown`. The hash identifies the build only. Passwords depend on the derivation spec below, not on the hash.
 
 ## Usage
