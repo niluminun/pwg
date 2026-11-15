@@ -120,10 +120,10 @@ On Unix the folder is created with mode 0700 and the file with mode 0600. Writes
 
 These are estimates, not measurements on a 512 MB device.
 
-- With m = 65536 KiB, Argon2 needs about 64 MiB for its memory matrix, plus a little program overhead. The 64 MiB figure comes straight from the parameter, not from a measurement. [Likely]
-- From that figure, a device with 512 MB of RAM will probably cope if enough memory is free. This has not been tested on real hardware. [Likely]
-- If the allocation fails, the process probably aborts instead of returning a clean error. Not checked. [Likely]
-- Time per `gen` depends on the CPU. It has not been measured on any weak device, so no number of seconds is promised. [Guessing]
+- With m = 65536 KiB, Argon2 needs about 64 MiB for its memory matrix, plus a little program overhead. The 64 MiB figure comes straight from the parameter, not from a measurement.
+- From that figure, a device with 512 MB of RAM will probably cope if enough memory is free. This has not been tested on real hardware.
+- If the allocation fails, the process probably aborts instead of returning a clean error. Not checked.
+- Time per `gen` depends on the CPU. It has not been measured on any weak device, so no number of seconds is promised.
 - The parameters cannot be lowered without changing every password.
 
 Before using it for real accounts, run the golden tests on the weakest device you have.
