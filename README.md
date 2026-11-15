@@ -95,7 +95,7 @@ Normalization:
 
 JSON. Default locations:
 
-- Linux, macOS, Termux: `$XDG_CONFIG_HOME/pwg/profiles.json`, or `$HOME/.config/pwg/profiles.json`.
+- Linux, macOS: `$XDG_CONFIG_HOME/pwg/profiles.json`, or `$HOME/.config/pwg/profiles.json`.
 - Windows: `%APPDATA%\pwg\profiles.json`.
 
 On Unix the folder is created with mode 0700 and the file with mode 0600. Writes are atomic: the data goes to a `.tmp` file that is then renamed, so a crash does not leave a broken file. Unknown fields are rejected, so a typo like `lenght` is caught right away.
