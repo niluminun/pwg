@@ -15,7 +15,7 @@ The key is the only secret. The profile file is not a cryptographic secret, but 
 
 ## Building
 
-You need Rust (2021 edition). The project was built here with Rust 1.97.0.
+You need Rust. The project was built here with Rust 1.97.0.
 
 ```
 cargo build --release
